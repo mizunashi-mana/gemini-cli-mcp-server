@@ -2,18 +2,25 @@
 
 ## 現在のフェーズ
 
-**Phase 0: 準備 / 設計** — 2026-04-30 時点
+**Phase 1: スパイク / 技術検証** — 2026-05-06 時点
 
-リポジトリ初期化と autodev 開発環境のセットアップ完了直後。コード資産はまだなし。
+Phase 0（準備 / 設計）完了。スキャフォールド（`package.json`、`tsconfig.json`、
+`devenv.nix` 等）が整備され、`npm run typecheck` / `build` / `test` が動く状態になった。
+次は Gemini CLI と MCP SDK の最小疎通を取る。
 
 ## 完了済み機能
 
-なし（新規プロジェクト）。
+- autodev 開発環境のセットアップ（`.ai-agent/`、`.claude/skills/`）
+- リポジトリスキャフォールド
+  - `devenv.nix` / `devenv.yaml` / `.envrc`（devenv デフォルトの Node.js + npm）
+  - `package.json`（type: module、`build` / `typecheck` / `dev` / `test` スクリプト、
+    `engines.node: >=22.0.0`）
+  - `tsconfig.json`（ES2022 / NodeNext / strict）
+  - `src/index.ts`（プレースホルダ）
 
 ## 進行中の作業
 
-- autodev 開発環境のセットアップ（本タスクで完了予定）
-- リポジトリ初期化（`package.json`、`devenv.nix`、`tsconfig.json` 等のスキャフォールド）
+- Phase 1（スパイク / 技術検証）の着手準備
 
 ## 今後の計画
 

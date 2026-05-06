@@ -52,13 +52,20 @@ Prerequisites:
 - [devenv](https://devenv.sh/) (with Nix) for the development shell
 - Node.js (provided via devenv)
 
+Enter the dev shell, then run npm scripts:
+
 ```bash
-direnv allow      # activate devenv shell
+devenv shell      # enter the development shell
+
 npm install       # install dependencies
 npm run dev       # run the MCP server in dev mode
 npm run build     # build for distribution
 npm run pack:dxt  # produce a .dxt package
 ```
+
+> If you prefer [direnv](https://direnv.net/), create a local `.envrc` containing
+> `use devenv` and run `direnv allow`. `.envrc` is intentionally not committed so
+> that contributors can choose their own activation strategy.
 
 The exact set of scripts will solidify as the codebase grows.
 

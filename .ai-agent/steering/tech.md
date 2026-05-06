@@ -22,7 +22,8 @@
 
 - **devenv** — Nix ベースの開発環境管理。`devenv.nix` / `devenv.yaml` で再現可能な
   ローカル環境を提供する
-- **direnv** との連動を想定（`.envrc` で `use devenv`）
+- **direnv** はオプション扱い。`.envrc` はリポジトリにコミットしない方針のため、
+  使いたい開発者は各自 `.envrc`（`use devenv`）を作成する
 
 ## アーキテクチャ概要
 
@@ -67,7 +68,7 @@
 
 ```bash
 # 想定フロー
-direnv allow                  # devenv 起動
+devenv shell                  # devenv シェルに入る（direnv 派は各自 .envrc を作成）
 npm install                   # 依存導入
 npm run dev                   # 開発モード（tsx watch 等）
 npm run build                 # tsc ビルド

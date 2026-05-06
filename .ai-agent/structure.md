@@ -1,7 +1,8 @@
 # gemini-mcp ディレクトリ構成
 
-本ドキュメントは 2026-04-30 時点でのリポジトリ構造を記述する。新規プロジェクトのため、
-ソースコード・ビルド設定はまだ存在せず、autodev 開発環境のドキュメント類のみが配置されている。
+本ドキュメントは 2026-05-06 時点でのリポジトリ構造を記述する。Phase 0 のスキャフォールドが
+完了し、TypeScript / npm / devenv ベースの最小ビルド環境が整った状態。実装本体（MCP サーバー
+／Gemini CLI アダプタ）は未着手。
 
 ## 全体構造
 
@@ -33,6 +34,13 @@ gemini-mcp/
 │       ├── autodev-start-new-task/
 │       ├── autodev-steering/
 │       └── autodev-switch-to-default/
+├── src/                          # TypeScript ソース
+│   └── index.ts                  # エントリポイント（現状はプレースホルダ）
+├── devenv.nix                    # Node.js + npm 環境定義（バージョンは devenv デフォルト）
+├── devenv.yaml                   # devenv 入力（nixpkgs rolling）
+├── devenv.lock                   # devenv ロックファイル
+├── package.json                  # npm スクリプト・依存（dev のみ: ts/tsx/vitest）
+├── tsconfig.json                 # TS コンパイラ設定（ES2022 / NodeNext / strict）
 └── CLAUDE.md                     # Claude Code 向けプロジェクトガイド
 ```
 
@@ -89,16 +97,30 @@ autodev フローを構成するカスタムスキル群。本リポジトリで
 
 - **`CLAUDE.md`** — Claude Code が起動時に読み込むプロジェクトガイド。autodev ドキュメントの
   在りかとプロダクト固有の重要原則（Gemini CLI 経由・外部ストレージなし・DXT 配布）を記載。
+- **`package.json`** — npm メタデータ。`type: module`（ESM）、`engines.node >= 22`、
+  `private: true`。スクリプトは `build` / `typecheck` / `dev` / `test` の最小セット。
+  実装本体に必要な `@modelcontextprotocol/sdk` などは Phase 1 で追加予定。
+- **`tsconfig.json`** — TypeScript 設定。`target: ES2022`、`module: NodeNext`、
+  `strict: true`、`rootDir: src`、`outDir: dist`、`noUncheckedIndexedAccess` 有効。
+- **`devenv.nix` / `devenv.yaml` / `devenv.lock`** — Nix ベースの再現可能な開発環境。
+  devenv のデフォルト Node.js（執筆時点で 24 系）と npm を提供する。Node のバージョンを
+  固定したくなったら `languages.javascript.package` を明示する。
+- **`.envrc`（リポジトリ非管理）** — direnv 利用者向け。リポジトリには含めず、各自で
+  `use devenv` のみ書いた `.envrc` を作成して `direnv allow` する想定。`.gitignore` に
+  記載済み。
 
 ## アーキテクチャパターン（実装後に追記）
 
-ソースコードがまだないため、実装が始まったら以下を追記する:
+実装本体は未着手（`src/index.ts` はプレースホルダのみ）。Phase 1 以降で以下を追加・追記する:
 
 - レイヤー構造（MCP サーバーレイヤー / アダプタレイヤー / CLI 実行レイヤー）
 - 各層のディレクトリ配置（`src/server/`、`src/adapter/`、`src/cli/` 等の予定）
 - DXT パッケージング関連ファイル（`manifest.json`、ビルド出力先）
 
-## テスト構成（実装後に追記）
+## テスト構成
 
-テストランナー（vitest 第一候補）と配置ルール（`*.test.ts` を実装ファイル隣接 or `tests/`
-ディレクトリ集約）は実装開始時に決定し、ここに追記する。
+テストランナーは **vitest** を採用（Phase 0 で `devDependencies` に追加済み）。
+`npm test` は `vitest run --passWithNoTests` で起動し、現時点ではテストゼロで成功する。
+
+ファイル配置ルールは実装開始時に決定する。第一候補は `*.test.ts` を実装ファイルに
+隣接させる方式（テストと実装の対応が見やすい）。

@@ -12,10 +12,17 @@ build/
 # DXT build artifacts
 *.dxt
 
-# devenv / direnv
-.devenv/
-.devenv.flake.nix
+# devenv
+.devenv*
+devenv.local.nix
+devenv.local.yaml
+
+# direnv
 .direnv/
+.envrc
+
+# pre-commit (devenv が生成する場合がある)
+.pre-commit-config.yaml
 
 # Editor / OS
 .DS_Store
