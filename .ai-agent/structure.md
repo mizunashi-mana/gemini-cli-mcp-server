@@ -36,7 +36,6 @@ gemini-mcp/
 │       └── autodev-switch-to-default/
 ├── src/                          # TypeScript ソース
 │   └── index.ts                  # エントリポイント（現状はプレースホルダ）
-├── .envrc                        # direnv → devenv フック
 ├── devenv.nix                    # Node.js + npm 環境定義（バージョンは devenv デフォルト）
 ├── devenv.yaml                   # devenv 入力（nixpkgs rolling）
 ├── devenv.lock                   # devenv ロックファイル
@@ -106,7 +105,9 @@ autodev フローを構成するカスタムスキル群。本リポジトリで
 - **`devenv.nix` / `devenv.yaml` / `devenv.lock`** — Nix ベースの再現可能な開発環境。
   devenv のデフォルト Node.js（執筆時点で 24 系）と npm を提供する。Node のバージョンを
   固定したくなったら `languages.javascript.package` を明示する。
-- **`.envrc`** — direnv フック。`use devenv` で devenv の環境を読み込む。
+- **`.envrc`（リポジトリ非管理）** — direnv 利用者向け。リポジトリには含めず、各自で
+  `use devenv` のみ書いた `.envrc` を作成して `direnv allow` する想定。`.gitignore` に
+  記載済み。
 
 ## アーキテクチャパターン（実装後に追記）
 

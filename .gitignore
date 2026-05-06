@@ -19,6 +19,7 @@ devenv.local.yaml
 
 # direnv
 .direnv/
+.envrc
 
 # pre-commit (devenv が生成する場合がある)
 .pre-commit-config.yaml

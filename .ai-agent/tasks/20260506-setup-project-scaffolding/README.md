@@ -22,8 +22,8 @@ Phase 1 の最初の項目「`@google/gemini-cli` の動作確認」は、まず
 
 ### スコープ内
 
-1. **devenv 環境** — `devenv.nix` / `devenv.yaml` / `.envrc` を整備し、devenv デフォルトの
-   Node.js + npm が `direnv allow` で立ち上がる状態にする
+1. **devenv 環境** — `devenv.nix` / `devenv.yaml` を整備し、`devenv shell` で devenv デフォルトの
+   Node.js + npm が立ち上がる状態にする（`.envrc` はリポジトリ非管理 — direnv 派は各自で作成）
 2. **`package.json`** — 最小限のメタデータ + 後続フェーズで使う npm scripts の枠組みを用意
    - `name`: `gemini-mcp`、`version`: `0.0.0`、`license`: `(Apache-2.0 OR MPL-2.0)`、
      `type`: `module`
@@ -47,7 +47,7 @@ Phase 1 の最初の項目「`@google/gemini-cli` の動作確認」は、まず
 
 ## 完了条件
 
-- [x] `direnv allow` で devenv 環境が立ち上がり、Node.js + npm が利用できる
+- [x] `devenv shell` で devenv 環境が立ち上がり、Node.js + npm が利用できる
 - [x] `npm install` がエラーなく完了する
 - [x] `npm run typecheck` がエラーなく完了する
 - [x] `npm run build` がエラーなく完了し、`dist/` に成果物が出る
@@ -65,6 +65,11 @@ Phase 1 の最初の項目「`@google/gemini-cli` の動作確認」は、まず
   Node.js 24.14.1 + npm 11.11.0 が devenv shell 内で利用可能になることを確認。
   Node 20 LTS は今日時点（2026-05-06）でメンテナンス終了が約 5 ヶ月後に迫っており、
   新規プロジェクトの floor として固定するメリットが小さいと判断。
+- 2026-05-06: PR レビューで `.envrc` 欠落が Critical 指摘となり、一度 `git add -f .envrc`
+  で追加コミット（e6f50bd）したが、ユーザー方針として「`.envrc` はコミットしない」と確定。
+  `.envrc` を再度 untrack し、`.gitignore` にプロジェクトレベルで追加。
+  `README.md` / `tech.md` / `structure.md` の手順を「`devenv shell` を canonical、direnv
+  派は各自で `.envrc` を作成」に変更。
 - 2026-05-06: `package.json`（type: module、scripts: build/typecheck/dev/test、
   devDependencies: typescript / @types/node / tsx / vitest）、
   `tsconfig.json`（ES2022 / NodeNext / strict / noUncheckedIndexedAccess）、
