@@ -37,7 +37,7 @@ gemini-mcp/
 ├── src/                          # TypeScript ソース
 │   └── index.ts                  # エントリポイント（現状はプレースホルダ）
 ├── .envrc                        # direnv → devenv フック
-├── devenv.nix                    # Node.js 20 LTS + npm 環境定義
+├── devenv.nix                    # Node.js + npm 環境定義（バージョンは devenv デフォルト）
 ├── devenv.yaml                   # devenv 入力（nixpkgs rolling）
 ├── devenv.lock                   # devenv ロックファイル
 ├── package.json                  # npm スクリプト・依存（dev のみ: ts/tsx/vitest）
@@ -98,7 +98,7 @@ autodev フローを構成するカスタムスキル群。本リポジトリで
 
 - **`CLAUDE.md`** — Claude Code が起動時に読み込むプロジェクトガイド。autodev ドキュメントの
   在りかとプロダクト固有の重要原則（Gemini CLI 経由・外部ストレージなし・DXT 配布）を記載。
-- **`package.json`** — npm メタデータ。`type: module`（ESM）、`engines.node >= 20`、
+- **`package.json`** — npm メタデータ。`type: module`（ESM）、`engines.node >= 22`、
   `private: true`。スクリプトは `build` / `typecheck` / `dev` / `test` の最小セット。
   実装本体に必要な `@modelcontextprotocol/sdk` などは Phase 1 で追加予定。
 - **`tsconfig.json`** — TypeScript 設定。`target: ES2022`、`module: NodeNext`、
