@@ -1,8 +1,8 @@
 # gemini-mcp ディレクトリ構成
 
-本ドキュメントは 2026-05-06 時点でのリポジトリ構造を記述する。Phase 0 のスキャフォールドが
-完了し、TypeScript / npm / devenv ベースの最小ビルド環境が整った状態。実装本体（MCP サーバー
-／Gemini CLI アダプタ）は未着手。
+本ドキュメントは 2026-05-06 時点でのリポジトリ構造を記述する。Phase 1 のスパイクが
+完了し、最小 MCP サーバー（stdio + `gemini-prompt` ツール 1 つ）が動作する状態。
+レイヤー分割や複数ツール展開は Phase 2（MVP）で実施する。
 
 ## 全体構造
 
@@ -35,7 +35,8 @@ gemini-mcp/
 │       ├── autodev-steering/
 │       └── autodev-switch-to-default/
 ├── src/                          # TypeScript ソース
-│   └── index.ts                  # エントリポイント（現状はプレースホルダ）
+│   ├── gemini.ts                 # Gemini CLI サブプロセス呼び出しアダプタ
+│   └── index.ts                  # MCP サーバー雛形（stdio + gemini-prompt ツール）
 ├── devenv.nix                    # Node.js + npm 環境定義（バージョンは devenv デフォルト）
 ├── devenv.yaml                   # devenv 入力（nixpkgs rolling）
 ├── devenv.lock                   # devenv ロックファイル
@@ -99,9 +100,10 @@ autodev フローを構成するカスタムスキル群。本リポジトリで
   在りかとプロダクト固有の重要原則（Gemini CLI 経由・外部ストレージなし・DXT 配布）を記載。
 - **`package.json`** — npm メタデータ。`type: module`（ESM）、`engines.node >= 22`、
   `private: true`。スクリプトは `build` / `typecheck` / `dev` / `test` の最小セット。
-  実装本体に必要な `@modelcontextprotocol/sdk` などは Phase 1 で追加予定。
+  Phase 1 で `@modelcontextprotocol/sdk` と `zod` を `dependencies` に追加済み。
 - **`tsconfig.json`** — TypeScript 設定。`target: ES2022`、`module: NodeNext`、
-  `strict: true`、`rootDir: src`、`outDir: dist`、`noUncheckedIndexedAccess` 有効。
+  `strict: true`、`rootDir: src`、`outDir: dist`、`noUncheckedIndexedAccess` 有効、
+  `types: ["node"]` で Node.js 型を取り込む。
 - **`devenv.nix` / `devenv.yaml` / `devenv.lock`** — Nix ベースの再現可能な開発環境。
   devenv のデフォルト Node.js（執筆時点で 24 系）と npm を提供する。Node のバージョンを
   固定したくなったら `languages.javascript.package` を明示する。
@@ -109,13 +111,29 @@ autodev フローを構成するカスタムスキル群。本リポジトリで
   `use devenv` のみ書いた `.envrc` を作成して `direnv allow` する想定。`.gitignore` に
   記載済み。
 
-## アーキテクチャパターン（実装後に追記）
+## アーキテクチャパターン
 
-実装本体は未着手（`src/index.ts` はプレースホルダのみ）。Phase 1 以降で以下を追加・追記する:
+Phase 1 時点ではフラットな構成（`src/` 直下の 2 ファイル）を採用する。MVP 以降で
+責務が大きくなった段階でディレクトリ分割を検討する。
 
-- レイヤー構造（MCP サーバーレイヤー / アダプタレイヤー / CLI 実行レイヤー）
-- 各層のディレクトリ配置（`src/server/`、`src/adapter/`、`src/cli/` 等の予定）
+- **`src/index.ts`** — エントリポイント兼サーバー組み立て層。`createServer()` で
+  `McpServer` を構築し、`gemini-prompt` ツールを登録。`StdioServerTransport` で
+  stdio に接続する。ログは stderr に出す（stdout は MCP のトランスポート占有のため）。
+- **`src/gemini.ts`** — Gemini CLI 実行層。`runGemini(prompt, options)` で
+  `child_process.spawn("gemini", ["--prompt", ..., "--output-format", "json", "--skip-trust"])`
+  を起動し、stdout の JSON から `response` を取り出す。
+
+Phase 2 以降で以下を追加・追記する想定:
+
+- レイヤー分割（`src/server/` / `src/adapter/` / `src/cli/` など）
 - DXT パッケージング関連ファイル（`manifest.json`、ビルド出力先）
+
+## 動作確認用スクラッチ
+
+`.scratch/` を `.gitignore` に登録済み。Phase 1 のローカル疎通確認では
+`.scratch/spike-client.mjs` から `dist/index.js` に対して
+`@modelcontextprotocol/sdk` の `Client` + `StdioClientTransport` で接続する形を採った。
+コミットしないが、再検証時のために手順をタスク README の作業ログに残している。
 
 ## テスト構成
 
